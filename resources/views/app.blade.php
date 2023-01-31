@@ -40,6 +40,14 @@
                 </div>
             </header>
         </div>
+        @include('menu')
+        <div class="main-content">
+            <div class="page-content">
+                <div class="container-fluid">
+                    @yield('content')
+                </div>
+            </div>
+        </div>
         <script src="{{ asset('js/bootstrap.bundle.min.js') }}"></script>
         @livewireScripts
     </body>
