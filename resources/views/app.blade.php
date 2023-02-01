@@ -21,6 +21,14 @@
                 font-weight: bold;
             }
 
+            .invalid-feedback {
+                display: block;
+                width: 100%;
+                margin-top: 0.25rem;
+                font-size: .875em;
+                color: #ed5e5e;
+            }
+
         </style>
     </head>
     <body class="antialiased">
