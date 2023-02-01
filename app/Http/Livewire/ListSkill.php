@@ -11,8 +11,12 @@ class ListSkill extends Component
     use WithPagination;
     protected $paginationTheme = 'bootstrap';
 
-    public $active;
+    public $active = true;
     public $search;
+
+    protected $listeners = [
+        '$refresh'
+    ];
 
     public function render()
     {
