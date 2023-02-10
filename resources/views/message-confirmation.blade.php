@@ -1,6 +1,6 @@
 <div>
     @if ($message)
-        <div class="alert alert-success align-items-center d-flex">
+        <div class="alert alert-success align-items-center d-flex" id="message-confirmation">
             <span class="card-title mb-0 flex-grow-1">{{ $message }}</span>
             <div class="flex-shrink-0">
                 <div class="dropdown card-header-dropdown">
@@ -12,3 +12,12 @@
         </div>
     @endif
 </div>
+<script>
+    window.addEventListener('hide-message', () => {
+        setTimeout(() => {
+            const element = document.getElementById('message-confirmation');
+            element.classList.remove("d-flex");
+            element.style.display = 'none';
+        }, 5000);
+    });
+</script>

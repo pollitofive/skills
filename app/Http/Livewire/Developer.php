@@ -5,6 +5,7 @@ namespace App\Http\Livewire;
 use App\Models\Developer as DeveloperModel;
 use App\Models\Skill as SkillAlias;
 use App\Models\SkillXDeveloper;
+use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
 class Developer extends Component
@@ -17,6 +18,7 @@ class Developer extends Component
     public $birthday;
     public $skills = [];
     public $message;
+    protected $listeners = ['setEditElement' => 'edit','deleteElement' => 'delete','activateElement' => 'activate'];
 
         public function submitForm()
     {
@@ -34,10 +36,12 @@ class Developer extends Component
         $model->birthday = $developer['birthday'];
         $model->save();
 
+        DB::table('skill_x_developers')->where('developer_id','=',$model->id)->delete();
         foreach($this->skills as $skill) {
             $skill_model = new SkillXDeveloper(['skill_id' => $skill]);
             $model->skills_x_developer()->save($skill_model);
         }
+
 
         $this->developer_id = '';
         $this->firstname = '';
@@ -46,9 +50,12 @@ class Developer extends Component
         $this->email = '';
         $this->birthday = '';
         $this->skills = [];
-        $this->message = 'Skill successfully created.';
+        $this->message = 'Developer successfully saved.';
 
         $this->dispatchBrowserEvent('contentChanged');
+        $this->dispatchBrowserEvent('scroll-to-list');
+        $this->dispatchBrowserEvent('hide-message');
+        $this->emitTo('list-developers', '$refresh');
     }
 
     public function render()
@@ -63,8 +70,8 @@ class Developer extends Component
         return [
             'firstname' => 'required',
             'lastname' => 'required',
-            'nid' => 'sometimes|numeric|unique:developers',
-            'email' => 'required|email|unique:developers',
+            'nid' => 'sometimes|numeric|unique:developers,nid,'.$this->developer_id,
+            'email' => 'required|email|unique:developers,email,'.$this->developer_id,
             'birthday' => 'sometimes|date',
             'skills' => 'required'
         ];
@@ -76,6 +83,40 @@ class Developer extends Component
             'skills.required' => 'You should select at least one skill'
         ];
     }
+
+    public function activate($id)
+    {
+        $skill = DeveloperModel::whereId($id)->withTrashed()->first();
+        $skill->restore();
+        $this->emitTo('list-developers', '$refresh');
+        $this->message = '';
+    }
+
+
+    public function delete($id)
+    {
+        $skill = DeveloperModel::whereId($id)->first();
+        $skill->delete();
+        $this->emitTo('list-developers', '$refresh');
+        $this->message = '';
+    }
+
+
+    public function edit($id)
+    {
+        $developer = DeveloperModel::whereId($id)->withTrashed()->first();
+        $this->firstname = $developer->firstname;
+        $this->lastname = $developer->lastname;
+        $this->nid = $developer->nid;
+        $this->email = $developer->email;
+        $this->birthday = $developer->birthday;
+        $this->skills = $developer->skills;
+        $this->developer_id = $developer->id;
+        $this->message = '';
+
+        $this->dispatchBrowserEvent('scroll-to-top');
+    }
+
 
 
 }

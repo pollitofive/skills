@@ -44,7 +44,7 @@ class Skill extends Component
 
         $this->skill_id = '';
         $this->name = '';
-        $this->message = 'Skill successfully created.';
+        $this->message = 'Skill successfully saved.';
         $this->emitTo('list-skill', '$refresh');
     }
 

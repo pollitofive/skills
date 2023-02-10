@@ -1,4 +1,4 @@
-<div>
+<div id="form-developer">
     <h1>Developers</h1>
     <form wire:submit.prevent="submitForm" novalidate>
         @include('message-confirmation')
@@ -81,6 +81,7 @@
     function createMultiJsElement()
     {
         var multiSelectBasic = document.getElementById("skills");
+
         if (multiSelectBasic) {
             multi(multiSelectBasic, {
                 non_selected_header: "Not selected",
@@ -105,3 +106,21 @@
 
 </script>
 
+<script>
+    window.addEventListener('scroll-to-top', (ev) => {
+        ev.stopPropagation();
+        const el = window.document.getElementById("layout-wrapper");
+        el.scrollIntoView({
+            behavior: 'smooth',
+        });
+    }, false);
+
+    window.addEventListener('scroll-to-list', (ev) => {
+        ev.stopPropagation();
+        const el = window.document.getElementById("list-developers");
+        el.scrollIntoView({
+            behavior: 'smooth',
+        });
+    }, false);
+
+</script>
