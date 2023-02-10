@@ -13,6 +13,8 @@
         <link rel="stylesheet" href="{{ asset('css/app.min.css') }}">
         <link rel="stylesheet" href="{{ asset('css/custom.min.css') }}">
         <link rel="stylesheet" href="{{ asset('css/swiper-bundle.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('css/multi.min.css') }}">
+        @yield('styles')
         @livewireStyles
 
         <style>
@@ -58,6 +60,10 @@
             </div>
         </div>
         <script src="{{ asset('js/bootstrap.bundle.min.js') }}"></script>
+        <script src="{{ asset('js/lord-icon-2.1.0.js') }}"></script>
+        <script src="{{ asset('js/feather.min.js') }}"></script>
+        <script src="{{ asset('js/multi.min.js') }}"></script>
+        @yield('scripts')
         @livewireScripts
     </body>
 </html>

@@ -8,4 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class Developer extends Model
 {
     use HasFactory;
+
+    public function skills_x_developer()
+    {
+        return $this->hasMany(SkillXDeveloper::class);
+    }
 }

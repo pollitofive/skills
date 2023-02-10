@@ -18,9 +18,9 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained();
             $table->string('firstname',50);
             $table->string('lastname',50);
-            $table->string('nid',10);
+            $table->string('nid',10)->unique();
             $table->date('birthday');
-            $table->date('email');
+            $table->string('email',50)->unique();
             $table->timestamps();
             $table->softDeletes();
 
