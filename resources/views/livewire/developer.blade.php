@@ -46,13 +46,14 @@
                                     <input type="text" wire:model.defer="lastname" class="form-control" id="lastname" placeholder="Lastname" tabindex="2">
                                     @error('lastname') <span class="invalid-feedback">{{ $message }}</span> @enderror
                                 </div>
-                                <div class="mt-3">
+                                <div class="mt-3" >
                                     <label for="skills" class="form-label">Skills</label>
                                     <select required multiple="multiple" wire:model.defer="skills" id="skills">
                                         @foreach($list_skills as $skill)
                                             <option value="{{ $skill->id }}">{{ $skill->description }}</option>
                                         @endforeach
                                     </select>
+                                    @error('skills') <span class="invalid-feedback">{{ $message }}</span> @enderror
                                 </div>
                             </div>
                         </div>
@@ -67,6 +68,14 @@
         </div>
     </form>
 </div>
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script>
+    flatpickr("#birthday", {
+        dateFormat: "Y-m-d",
+        allowInput: true
+    });
+</script>
 <script>
 
     function createMultiJsElement()
@@ -85,7 +94,13 @@
 
     window.addEventListener('contentChanged', e => {
         createMultiJsElement();
-    })
+    });
+
+    document.addEventListener("livewire:load", () => {
+        Livewire.hook('message.processed', (message, component) => {
+            createMultiJsElement();
+        });
+    });
 
 
 </script>

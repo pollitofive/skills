@@ -18,20 +18,7 @@ class Developer extends Component
     public $skills = [];
     public $message;
 
-    protected function rules()
-    {
-        return [
-            'firstname' => 'required',
-            'lastname' => 'required',
-//            'nid' => 'sometimes|numeric|unique:developers',
-            'nid' => 'sometimes',
-//            'email' => 'required|email|unique:developers',
-            'email' => 'required',
-            'birthday' => 'sometimes|date'
-        ];
-    }
-
-    public function submitForm()
+        public function submitForm()
     {
         $developer = $this->validate();
         if($this->developer_id) {
@@ -70,4 +57,25 @@ class Developer extends Component
             'list_skills' => SkillAlias::all()
         ]);
     }
+
+    protected function rules()
+    {
+        return [
+            'firstname' => 'required',
+            'lastname' => 'required',
+            'nid' => 'sometimes|numeric|unique:developers',
+            'email' => 'required|email|unique:developers',
+            'birthday' => 'sometimes|date',
+            'skills' => 'required'
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            'skills.required' => 'You should select at least one skill'
+        ];
+    }
+
+
 }
