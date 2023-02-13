@@ -412,7 +412,7 @@ File: Main Js File
             }
         }
     }
-    
+
     // add change event listener on right layout setting
     function getElementUsingTagname(ele, val) {
         Array.from(document.querySelectorAll("input[name=" + ele + "]")).forEach(function (x) {
