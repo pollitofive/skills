@@ -20,7 +20,7 @@ class Developer extends Component
     public $message;
     protected $listeners = ['setEditElement' => 'edit','deleteElement' => 'delete','activateElement' => 'activate'];
 
-        public function submitForm()
+    public function submitForm()
     {
         $developer = $this->validate();
         if($this->developer_id) {
