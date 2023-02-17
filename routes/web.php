@@ -27,6 +27,10 @@ Route::middleware('auth')->group(function () {
         return view('skills');
     })->name('skills');
 
+    Route::get('/change-password',function(){
+       return view('auth.change-password');
+    })->name('change-password');
+
 });
 
 require __DIR__.'/auth.php';
