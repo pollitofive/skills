@@ -28,7 +28,8 @@ class Developer extends Component
         } else {
             $model = new DeveloperModel();
         }
-        $model->user_id = 1;
+
+        $model->user_id = auth()->user()->id;
         $model->firstname = $developer['firstname'];
         $model->lastname = $developer['lastname'];
         $model->nid = $developer['nid'];
@@ -61,7 +62,7 @@ class Developer extends Component
     public function render()
     {
         return view('livewire.developer',[
-            'list_skills' => SkillAlias::all()
+            'list_skills' => SkillAlias::where('user_id','=',auth()->user()->id)->get()
         ]);
     }
 
@@ -86,7 +87,10 @@ class Developer extends Component
 
     public function activate($id)
     {
-        $skill = DeveloperModel::whereId($id)->withTrashed()->first();
+        $skill = DeveloperModel::whereId($id)
+                                ->where('user_id','=',auth()->user()->id)
+                                ->withTrashed()
+                                ->first();
         $skill->restore();
         $this->emitTo('list-developers', '$refresh');
         $this->message = '';
@@ -95,7 +99,9 @@ class Developer extends Component
 
     public function delete($id)
     {
-        $skill = DeveloperModel::whereId($id)->first();
+        $skill = DeveloperModel::whereId($id)
+                                ->where('user_id','=',auth()->user()->id)
+                                ->first();
         $skill->delete();
         $this->emitTo('list-developers', '$refresh');
         $this->message = '';
@@ -104,14 +110,17 @@ class Developer extends Component
 
     public function edit($id)
     {
-        $developer = DeveloperModel::whereId($id)->withTrashed()->first();
+        $developer = DeveloperModel::whereId($id)
+                                    ->where('user_id','=',auth()->user()->id)
+                                    ->withTrashed()
+                                    ->first();
         $this->firstname = $developer->firstname;
         $this->lastname = $developer->lastname;
         $this->nid = $developer->nid;
         $this->email = $developer->email;
         $this->birthday = $developer->birthday;
-        $this->skills = $developer->skills;
         $this->developer_id = $developer->id;
+        $this->skills = [];
         $this->message = '';
 
         $this->dispatchBrowserEvent('scroll-to-top');

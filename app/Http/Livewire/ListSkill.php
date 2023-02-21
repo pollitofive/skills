@@ -9,7 +9,6 @@ use Livewire\WithPagination;
 class ListSkill extends Component
 {
     use WithPagination;
-    protected $paginationTheme = 'bootstrap';
 
     public $active = true;
     public $search;
@@ -20,7 +19,8 @@ class ListSkill extends Component
 
     public function render()
     {
-        $model = SkillModel::where('description','like','%'.$this->search."%");
+        $model = SkillModel::where('user_id','=',auth()->user()->id)
+                            ->where('description','like','%'.$this->search."%");
         if(! $this->active) {
             $model = $model->withTrashed();
         }

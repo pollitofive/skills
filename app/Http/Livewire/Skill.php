@@ -3,6 +3,7 @@
 namespace App\Http\Livewire;
 
 use App\Models\Skill as SkillModel;
+use App\Rules\UniqueSkillForUser;
 use Livewire\Component;
 
 class Skill extends Component
@@ -11,14 +12,11 @@ class Skill extends Component
     public $skill_id;
     public $message;
     protected $listeners = ['setEditElement' => 'edit','deleteElement' => 'delete','activateElement' => 'activate'];
-    protected $messages = [
-        'name.unique' => 'The skill already exist'
-    ];
 
     protected function rules()
     {
         return [
-            'name' => 'required|unique:skills,description,'.$this->skill_id
+            'name' => ['required',new UniqueSkillForUser($this->skill_id)]
         ];
     }
 
@@ -38,7 +36,7 @@ class Skill extends Component
             $model = new SkillModel();
         }
 
-        $model->user_id = 1;
+        $model->user_id = auth()->user()->id;
         $model->description = $skill['name'];
         $model->save();
 
@@ -50,21 +48,29 @@ class Skill extends Component
 
     public function edit($id)
     {
-        $skill = SkillModel::whereId($id)->withTrashed()->first();
+        $skill = SkillModel::whereId($id)
+                            ->where('user_id','=',auth()->user()->id)
+                            ->withTrashed()
+                            ->first();
         $this->name = $skill->description;
         $this->skill_id = $skill->id;
     }
 
     public function delete($id)
     {
-        $skill = SkillModel::whereId($id)->first();
+        $skill = SkillModel::whereId($id)
+                            ->where('user_id','=',auth()->user()->id)
+                            ->first();
         $skill->delete();
         $this->emitTo('list-skill', '$refresh');
     }
 
     public function activate($id)
     {
-        $skill = SkillModel::whereId($id)->withTrashed()->first();
+        $skill = SkillModel::whereId($id)
+                            ->where('user_id','=',auth()->user()->id)
+                            ->withTrashed()
+                            ->first();
         $skill->restore();
         $this->emitTo('list-skill', '$refresh');
     }
