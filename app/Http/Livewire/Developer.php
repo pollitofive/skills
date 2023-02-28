@@ -5,7 +5,9 @@ namespace App\Http\Livewire;
 use App\Models\Developer as DeveloperModel;
 use App\Models\Skill as SkillAlias;
 use App\Models\SkillXDeveloper;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Redis;
 use Livewire\Component;
 
 class Developer extends Component
@@ -61,8 +63,12 @@ class Developer extends Component
 
     public function render()
     {
+        $list_skills = Cache::remember('skills.'.auth()->user()->id,33600, function(){
+            return SkillAlias::where('user_id','=',auth()->user()->id)->get();
+        });
+
         return view('livewire.developer',[
-            'list_skills' => SkillAlias::where('user_id','=',auth()->user()->id)->get()
+            'list_skills' => $list_skills
         ]);
     }
 

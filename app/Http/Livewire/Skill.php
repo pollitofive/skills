@@ -4,6 +4,7 @@ namespace App\Http\Livewire;
 
 use App\Models\Skill as SkillModel;
 use App\Rules\UniqueSkillForUser;
+use Illuminate\Support\Facades\Cache;
 use Livewire\Component;
 
 class Skill extends Component
@@ -39,6 +40,7 @@ class Skill extends Component
         $model->user_id = auth()->user()->id;
         $model->description = $skill['name'];
         $model->save();
+        Cache::forget('skills.'.auth()->user()->id);
 
         $this->skill_id = '';
         $this->name = '';
@@ -62,6 +64,7 @@ class Skill extends Component
                             ->where('user_id','=',auth()->user()->id)
                             ->first();
         $skill->delete();
+        Cache::forget('skills.'.auth()->user()->id);
         $this->emitTo('list-skill', '$refresh');
     }
 
@@ -72,6 +75,7 @@ class Skill extends Component
                             ->withTrashed()
                             ->first();
         $skill->restore();
+        Cache::forget('skills.'.auth()->user()->id);
         $this->emitTo('list-skill', '$refresh');
     }
 }
