@@ -19,7 +19,7 @@ class ChangePassword extends Component
     {
         return [
             'old_password' => ['required','min:6',new MatchOldPassword],
-            'new_password' => ['required','min:6','confirmed','different:password'],
+            'new_password' => ['required','min:6','confirmed','different:old_password'],
         ];
     }
 
