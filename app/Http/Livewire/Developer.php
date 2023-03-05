@@ -7,7 +7,6 @@ use App\Models\Skill as SkillAlias;
 use App\Models\SkillXDeveloper;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Redis;
 use Livewire\Component;
 
 class Developer extends Component
@@ -87,8 +86,36 @@ class Developer extends Component
     public function messages()
     {
         return [
-            'skills.required' => 'You should select at least one skill'
+            'skills.required' => 'You should select at least one skill.'
         ];
+    }
+
+    public function edit($id)
+    {
+        $developer = DeveloperModel::whereId($id)
+            ->where('user_id','=',auth()->user()->id)
+            ->withTrashed()
+            ->first();
+        $this->firstname = $developer->firstname;
+        $this->lastname = $developer->lastname;
+        $this->nid = $developer->nid;
+        $this->email = $developer->email;
+        $this->birthday = $developer->birthday;
+        $this->developer_id = $developer->id;
+        $this->skills = [];
+        $this->message = '';
+
+        $this->dispatchBrowserEvent('scroll-to-top');
+    }
+
+    public function delete($id)
+    {
+        $skill = DeveloperModel::whereId($id)
+            ->where('user_id','=',auth()->user()->id)
+            ->first();
+        $skill->delete();
+        $this->emitTo('list-developers', '$refresh');
+        $this->message = '';
     }
 
     public function activate($id)
@@ -102,35 +129,6 @@ class Developer extends Component
         $this->message = '';
     }
 
-
-    public function delete($id)
-    {
-        $skill = DeveloperModel::whereId($id)
-                                ->where('user_id','=',auth()->user()->id)
-                                ->first();
-        $skill->delete();
-        $this->emitTo('list-developers', '$refresh');
-        $this->message = '';
-    }
-
-
-    public function edit($id)
-    {
-        $developer = DeveloperModel::whereId($id)
-                                    ->where('user_id','=',auth()->user()->id)
-                                    ->withTrashed()
-                                    ->first();
-        $this->firstname = $developer->firstname;
-        $this->lastname = $developer->lastname;
-        $this->nid = $developer->nid;
-        $this->email = $developer->email;
-        $this->birthday = $developer->birthday;
-        $this->developer_id = $developer->id;
-        $this->skills = [];
-        $this->message = '';
-
-        $this->dispatchBrowserEvent('scroll-to-top');
-    }
 
 
 
