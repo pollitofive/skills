@@ -16,14 +16,13 @@ return new class extends Migration
         Schema::create('developers', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained();
-            $table->string('firstname',50);
-            $table->string('lastname',50);
-            $table->string('nid',10)->unique();
+            $table->string('firstname', 50);
+            $table->string('lastname', 50);
+            $table->string('nid', 10)->unique();
             $table->date('birthday');
-            $table->string('email',50)->unique();
+            $table->string('email', 50)->unique();
             $table->timestamps();
             $table->softDeletes();
-
         });
     }
 

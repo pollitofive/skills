@@ -18,7 +18,7 @@ class SkillFactory extends Factory
     {
         return [
             'user_id' => 1,
-            'description' => $this->faker->colorName()
+            'description' => $this->faker->colorName(),
         ];
     }
 }

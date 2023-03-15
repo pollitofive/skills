@@ -18,13 +18,13 @@ class SkillTest extends TestCase
     public function skill_form_sends_save_data()
     {
         Livewire::test(Skill::class)
-            ->set('name','Livewire')
+            ->set('name', 'Livewire')
             ->call('submitForm')
             ->assertSee('Skill successfully saved.');
 
-        $this->assertDatabaseHas('skills',[
+        $this->assertDatabaseHas('skills', [
             'user_id' => auth()->user()->id,
-            'description' => 'Livewire'
+            'description' => 'Livewire',
         ]);
     }
 
@@ -36,11 +36,10 @@ class SkillTest extends TestCase
             ->assertHasErrors(['name' => 'required'])
             ->assertSee('The name field is required.');
 
-        $this->assertDatabaseMissing('skills',[
+        $this->assertDatabaseMissing('skills', [
             'user_id' => auth()->user()->id,
-            'description' => 'Livewire'
+            'description' => 'Livewire',
         ]);
-
     }
 
     /** @test */
@@ -48,7 +47,7 @@ class SkillTest extends TestCase
     {
         \App\Models\Skill::create([
             'description' => 'Livewire',
-            'user_id' => auth()->user()->id
+            'user_id' => auth()->user()->id,
         ]);
 
         Livewire::test(Skill::class)
@@ -62,13 +61,13 @@ class SkillTest extends TestCase
     {
         $skill = \App\Models\Skill::create([
             'description' => 'Livewire',
-            'user_id' => auth()->user()->id
+            'user_id' => auth()->user()->id,
         ]);
 
         Livewire::test(Skill::class)
-            ->call('edit',$skill->id)
-            ->assertSet('name',$skill->description)
-            ->assertSet('skill_id',$skill->id);
+            ->call('edit', $skill->id)
+            ->assertSet('name', $skill->description)
+            ->assertSet('skill_id', $skill->id);
     }
 
     /** @test */
@@ -76,23 +75,23 @@ class SkillTest extends TestCase
     {
         $skill = \App\Models\Skill::create([
             'description' => 'Livewire',
-            'user_id' => auth()->user()->id
+            'user_id' => auth()->user()->id,
         ]);
 
         Livewire::test(Skill::class)
-            ->set('skill_id',$skill->id)
+            ->set('skill_id', $skill->id)
             ->set('name', 'Laravel')
             ->call('submitForm')
             ->assertSee('Skill successfully saved.');
 
-        $this->assertDatabaseMissing('skills',[
+        $this->assertDatabaseMissing('skills', [
             'user_id' => auth()->user()->id,
-            'description' => 'Livewire'
+            'description' => 'Livewire',
         ]);
 
-        $this->assertDatabaseHas('skills',[
+        $this->assertDatabaseHas('skills', [
             'user_id' => auth()->user()->id,
-            'description' => 'Laravel'
+            'description' => 'Laravel',
         ]);
     }
 
@@ -101,18 +100,17 @@ class SkillTest extends TestCase
     {
         $skill = \App\Models\Skill::create([
             'description' => 'Livewire',
-            'user_id' => auth()->user()->id
+            'user_id' => auth()->user()->id,
         ]);
 
         Livewire::test(Skill::class)
-            ->call('delete',$skill->id);
+            ->call('delete', $skill->id);
 
-        $this->assertSoftDeleted('skills',[
+        $this->assertSoftDeleted('skills', [
             'user_id' => auth()->user()->id,
-            'description' => 'Livewire'
+            'description' => 'Livewire',
         ]);
     }
-
 
     /** @test */
     public function skill_can_be_activated()
@@ -124,11 +122,11 @@ class SkillTest extends TestCase
         $skill->delete();
 
         Livewire::test(Skill::class)
-            ->call('activate',$skill->id);
+            ->call('activate', $skill->id);
 
-        $this->assertNotSoftDeleted('skills',[
+        $this->assertNotSoftDeleted('skills', [
             'user_id' => auth()->user()->id,
-            'description' => 'Livewire'
+            'description' => 'Livewire',
         ]);
     }
 }

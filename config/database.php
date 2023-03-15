@@ -85,7 +85,6 @@ return [
             ]) : [],
         ],
 
-
         'pgsql' => [
             'driver' => 'pgsql',
             'url' => env('DATABASE_URL'),

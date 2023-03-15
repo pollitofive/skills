@@ -10,24 +10,18 @@ class ListSkill extends Component
 {
     use WithPagination;
 
-    public $active = true;
-    public $search;
+    public bool $active = true;
+
+    public string $search = '';
 
     protected $listeners = [
-        '$refresh'
+        '$refresh',
     ];
 
-    public function render()
+    public function render(): \Illuminate\Contracts\View\View
     {
-        $model = SkillModel::where('user_id','=',auth()->user()->id)
-                            ->where('description','like','%'.$this->search."%");
-        if(! $this->active) {
-            $model = $model->withTrashed();
-        }
-
-        $data = $model->paginate(5);
-        return view('livewire.list-skill',[
-            'skills' => $data
+        return view('livewire.list-skill', [
+            'skills' => SkillModel::search($this->search, $this->active, auth()->user()->id)->paginate(5),
         ]);
     }
 }

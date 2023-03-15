@@ -26,9 +26,9 @@ class UniqueSkillForUser implements Rule
      */
     public function passes($attribute, $value)
     {
-        return Skill::where("description",'=',$value)
-                ->where('id','<>',$this->skill_id)
-                ->where('user_id','=',auth()->user()->id)
+        return Skill::where('description', '=', $value)
+                ->where('id', '<>', $this->skill_id)
+                ->where('user_id', '=', auth()->user()->id)
                 ->withTrashed()
                 ->first() === null;
     }

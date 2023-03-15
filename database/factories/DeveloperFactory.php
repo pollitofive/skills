@@ -20,9 +20,9 @@ class DeveloperFactory extends Factory
             'user_id' => '1',
             'firstname' => $this->faker->firstName,
             'lastname' => $this->faker->lastName,
-            'nid' => $this->faker->numberBetween(100000,50000000),
+            'nid' => $this->faker->numberBetween(100000, 50000000),
             'birthday' => $this->faker->date('Y-m-d'),
-            'email' => $this->faker->email
+            'email' => $this->faker->email,
         ];
     }
 }

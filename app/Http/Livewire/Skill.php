@@ -9,73 +9,72 @@ use Livewire\Component;
 
 class Skill extends Component
 {
-    public $name;
-    public $skill_id;
-    public $message;
-    protected $listeners = ['setEditElement' => 'edit','deleteElement' => 'delete','activateElement' => 'activate'];
+    public string $name = '';
 
-    protected function rules()
-    {
-        return [
-            'name' => ['required',new UniqueSkillForUser($this->skill_id)]
-        ];
-    }
+    public int $skill_id = 0;
 
+    public string $message;
 
-    public function render()
+    protected $listeners = ['setEditElement' => 'edit', 'deleteElement' => 'delete', 'activateElement' => 'activate'];
+
+    public function render(): \Illuminate\Contracts\View\View
     {
         return view('livewire.skill');
     }
 
-    public function submitForm()
+    public function submitForm(): void
     {
         $this->name = trim($this->name);
         $skill = $this->validate();
-        if($this->skill_id) {
-            $model = SkillModel::where('id',$this->skill_id)->first();
-        } else {
-            $model = new SkillModel();
-        }
+        $model = $this->getModel();
 
         $model->user_id = auth()->user()->id;
         $model->description = $skill['name'];
         $model->save();
         Cache::forget('skills.'.auth()->user()->id);
 
-        $this->skill_id = '';
+        $this->skill_id = 0;
         $this->name = '';
         $this->message = 'Skill successfully saved.';
         $this->emitTo('list-skill', '$refresh');
     }
 
-    public function edit($id)
+    public function edit(int $id): void
     {
-        $skill = SkillModel::whereId($id)
-                            ->where('user_id','=',auth()->user()->id)
-                            ->withTrashed()
-                            ->first();
+        $skill = SkillModel::first($id, auth()->user()->id);
         $this->name = $skill->description;
         $this->skill_id = $skill->id;
     }
 
-    public function delete($id)
+    public function delete(int $id): void
     {
-        $skill = SkillModel::whereId($id)
-                            ->where('user_id','=',auth()->user()->id)
-                            ->first();
+        $skill = SkillModel::first($id, auth()->user()->id);
         $skill->delete();
         Cache::forget('skills.'.auth()->user()->id);
         $this->emitTo('list-skill', '$refresh');
     }
 
-    public function activate($id)
+    public function activate(int $id): void
     {
-        $skill = SkillModel::whereId($id)
-                            ->where('user_id','=',auth()->user()->id)
-                            ->withTrashed()
-                            ->first();
+        $skill = SkillModel::first($id, auth()->user()->id);
         $skill->restore();
         Cache::forget('skills.'.auth()->user()->id);
         $this->emitTo('list-skill', '$refresh');
+    }
+
+    public function getModel(): SkillModel
+    {
+        if ($this->skill_id) {
+            return SkillModel::where('id', $this->skill_id)->first();
+        }
+
+        return new SkillModel();
+    }
+
+    protected function rules(): array
+    {
+        return [
+            'name' => ['required', new UniqueSkillForUser($this->skill_id)],
+        ];
     }
 }

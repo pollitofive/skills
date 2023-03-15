@@ -3,55 +3,49 @@
 namespace App\Http\Livewire;
 
 use App\Models\Developer as DeveloperModel;
-use App\Models\Skill as SkillAlias;
-use App\Models\SkillXDeveloper;
+use App\Models\Skill as SkillModel;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
 class Developer extends Component
 {
-    public $developer_id;
-    public $firstname;
-    public $nid;
-    public $lastname;
-    public $email;
-    public $birthday;
-    public $skills = [];
-    public $message;
-    protected $listeners = ['setEditElement' => 'edit','deleteElement' => 'delete','activateElement' => 'activate'];
+    public int $developer_id = 0;
 
-    public function submitForm()
+    public string $firstname;
+
+    public string $nid;
+
+    public string $lastname;
+
+    public string $email;
+
+    public string $birthday;
+
+    public array $skills = [];
+
+    public string $message;
+
+    protected $listeners = ['setEditElement' => 'edit', 'deleteElement' => 'delete', 'activateElement' => 'activate'];
+
+    public function render(): \Illuminate\Contracts\View\View
+    {
+        return view('livewire.developer', [
+            'list_skills' => Cache::remember('skills.'.auth()->user()->id, 33600, function () {
+                return SkillModel::whereUserId(auth()->user()->id)->get();
+            }),
+        ]);
+    }
+
+    public function submitForm(): void
     {
         $developer = $this->validate();
-        if($this->developer_id) {
-            $model = DeveloperModel::where('id',$this->developer_id)->first();
-        } else {
-            $model = new DeveloperModel();
-        }
-
-        $model->user_id = auth()->user()->id;
-        $model->firstname = $developer['firstname'];
-        $model->lastname = $developer['lastname'];
-        $model->nid = $developer['nid'];
-        $model->email = $developer['email'];
-        $model->birthday = $developer['birthday'];
+        $model = $this->getModel();
+        $developer['user_id'] = auth()->user()->id;
+        $model->setData($developer);
         $model->save();
+        $model->saveSkills($this->skills);
 
-        DB::table('skill_x_developers')->where('developer_id','=',$model->id)->delete();
-        foreach($this->skills as $skill) {
-            $skill_model = new SkillXDeveloper(['skill_id' => $skill]);
-            $model->skills_x_developer()->save($skill_model);
-        }
-
-
-        $this->developer_id = '';
-        $this->firstname = '';
-        $this->lastname = '';
-        $this->nid = '';
-        $this->email = '';
-        $this->birthday = '';
-        $this->skills = [];
+        $this->clearProperties();
         $this->message = 'Developer successfully saved.';
 
         $this->dispatchBrowserEvent('contentChanged');
@@ -60,42 +54,10 @@ class Developer extends Component
         $this->emitTo('list-developers', '$refresh');
     }
 
-    public function render()
+    public function edit(int $id): void
     {
-        $list_skills = Cache::remember('skills.'.auth()->user()->id,33600, function(){
-            return SkillAlias::where('user_id','=',auth()->user()->id)->get();
-        });
+        $developer = DeveloperModel::first($id, auth()->user()->id);
 
-        return view('livewire.developer',[
-            'list_skills' => $list_skills
-        ]);
-    }
-
-    protected function rules()
-    {
-        return [
-            'firstname' => 'required',
-            'lastname' => 'required',
-            'nid' => 'sometimes|numeric|unique:developers,nid,'.$this->developer_id,
-            'email' => 'required|email|unique:developers,email,'.$this->developer_id,
-            'birthday' => 'sometimes|date',
-            'skills' => 'required'
-        ];
-    }
-
-    public function messages()
-    {
-        return [
-            'skills.required' => 'You should select at least one skill.'
-        ];
-    }
-
-    public function edit($id)
-    {
-        $developer = DeveloperModel::whereId($id)
-            ->where('user_id','=',auth()->user()->id)
-            ->withTrashed()
-            ->first();
         $this->firstname = $developer->firstname;
         $this->lastname = $developer->lastname;
         $this->nid = $developer->nid;
@@ -108,28 +70,58 @@ class Developer extends Component
         $this->dispatchBrowserEvent('scroll-to-top');
     }
 
-    public function delete($id)
+    public function delete(int $id): void
     {
-        $skill = DeveloperModel::whereId($id)
-            ->where('user_id','=',auth()->user()->id)
-            ->first();
-        $skill->delete();
+        $developer = DeveloperModel::first($id, auth()->user()->id);
+        $developer->delete();
         $this->emitTo('list-developers', '$refresh');
         $this->message = '';
     }
 
-    public function activate($id)
+    public function activate(int $id): void
     {
-        $skill = DeveloperModel::whereId($id)
-                                ->where('user_id','=',auth()->user()->id)
-                                ->withTrashed()
-                                ->first();
-        $skill->restore();
+        $developer = DeveloperModel::first($id, auth()->user()->id);
+        $developer->restore();
         $this->emitTo('list-developers', '$refresh');
         $this->message = '';
     }
 
+    private function getModel(): DeveloperModel
+    {
+        if ($this->developer_id) {
+            return DeveloperModel::first($this->developer_id, auth()->user()->id);
+        }
 
+        return new DeveloperModel();
+    }
 
+    private function clearProperties(): void
+    {
+        $this->developer_id = 0;
+        $this->firstname = '';
+        $this->lastname = '';
+        $this->nid = '';
+        $this->email = '';
+        $this->birthday = '';
+        $this->skills = [];
+    }
 
+    protected function rules(): array
+    {
+        return [
+            'firstname' => 'required',
+            'lastname' => 'required',
+            'nid' => 'sometimes|numeric|unique:developers,nid,'.$this->developer_id,
+            'email' => 'required|email|unique:developers,email,'.$this->developer_id,
+            'birthday' => 'sometimes|date',
+            'skills' => 'required',
+        ];
+    }
+
+    protected function messages(): array
+    {
+        return [
+            'skills.required' => 'You should select at least one skill.',
+        ];
+    }
 }

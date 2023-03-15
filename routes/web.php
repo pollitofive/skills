@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -27,12 +26,9 @@ Route::middleware('auth')->group(function () {
         return view('skills');
     })->name('skills');
 
-    Route::get('/change-password',function(){
-       return view('auth.change-password');
+    Route::get('/change-password', function () {
+        return view('auth.change-password');
     })->name('change-password');
-
 });
 
 require __DIR__.'/auth.php';
-
-

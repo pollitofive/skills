@@ -20,27 +20,27 @@ class DeveloperTest extends TestCase
     public function developer_form_sends_save_data()
     {
         $skills = Skill::factory(3)->create([
-            'user_id' => auth()->user()->id
+            'user_id' => auth()->user()->id,
         ]);
 
         $data = $this->getData();
 
         Livewire::test(Developer::class)
-            ->set('firstname',$data['firstname'])
-            ->set('lastname',$data['lastname'])
-            ->set('nid',$data['nid'])
-            ->set('email',$data['email'])
-            ->set('birthday',$data['birthday'])
-            ->set('skills',$skills->pluck('id')->toArray())
+            ->set('firstname', $data['firstname'])
+            ->set('lastname', $data['lastname'])
+            ->set('nid', $data['nid'])
+            ->set('email', $data['email'])
+            ->set('birthday', $data['birthday'])
+            ->set('skills', $skills->pluck('id')->toArray())
             ->call('submitForm')
             ->assertSee('Developer successfully saved.');
 
-        $this->assertDatabaseHas('developers',$data);
+        $this->assertDatabaseHas('developers', $data);
 
-        foreach($skills as $skill) {
-            $this->assertDatabaseHas('skill_x_developers',[
+        foreach ($skills as $skill) {
+            $this->assertDatabaseHas('skill_x_developers', [
                 'skill_id' => $skill->id,
-                'developer_id' => 1
+                'developer_id' => 1,
             ]);
         }
     }
@@ -49,12 +49,12 @@ class DeveloperTest extends TestCase
     public function developer_form_validates_basic_data()
     {
         Livewire::test(Developer::class)
-            ->set('firstname','')
-            ->set('lastname','')
-            ->set('nid','A')
-            ->set('email','')
-            ->set('birthday','A')
-            ->set('skills',[])
+            ->set('firstname', '')
+            ->set('lastname', '')
+            ->set('nid', 'A')
+            ->set('email', '')
+            ->set('birthday', 'A')
+            ->set('skills', [])
             ->call('submitForm')
             ->assertSee('The firstname field is required.')
             ->assertSee('The lastname field is required.')
@@ -70,11 +70,11 @@ class DeveloperTest extends TestCase
     {
         \App\Models\Developer::factory()->create([
             'nid' => '33333333',
-            'user_id' => auth()->user()->id
+            'user_id' => auth()->user()->id,
         ]);
 
         Livewire::test(Developer::class)
-            ->set('nid','33333333')
+            ->set('nid', '33333333')
             ->call('submitForm')
             ->assertSee('The nid has already been taken.');
     }
@@ -84,11 +84,11 @@ class DeveloperTest extends TestCase
     {
         \App\Models\Developer::factory()->create([
             'email' => 'damianladiani@gmail.com',
-            'user_id' => auth()->user()->id
+            'user_id' => auth()->user()->id,
         ]);
 
         Livewire::test(Developer::class)
-            ->set('email','damianladiani@gmail.com')
+            ->set('email', 'damianladiani@gmail.com')
             ->call('submitForm')
             ->assertSee('The email has already been taken.');
     }
@@ -98,20 +98,20 @@ class DeveloperTest extends TestCase
     {
         $developer = \App\Models\Developer::factory()->create($this->getData());
         Livewire::test(Developer::class)
-            ->call('edit',$developer->id)
-            ->assertSet('firstname',$developer->firstname)
-            ->assertSet('lastname',$developer->lastname)
-            ->assertSet('nid',$developer->nid)
-            ->assertSet('birthday',$developer->birthday)
-            ->assertSet('email',$developer->email)
-            ->assertSet('developer_id',$developer->id);
+            ->call('edit', $developer->id)
+            ->assertSet('firstname', $developer->firstname)
+            ->assertSet('lastname', $developer->lastname)
+            ->assertSet('nid', $developer->nid)
+            ->assertSet('birthday', $developer->birthday)
+            ->assertSet('email', $developer->email)
+            ->assertSet('developer_id', $developer->id);
     }
 
     /** @test */
     public function developer_can_be_edited()
     {
         $skills = Skill::factory(3)->create([
-            'user_id' => auth()->user()->id
+            'user_id' => auth()->user()->id,
         ]);
 
         $data = $this->getData();
@@ -120,23 +120,23 @@ class DeveloperTest extends TestCase
             'firstname' => 'Damian Leandro',
             'lastname' => 'Ladini',
             'nid' => '44444444',
-            'email'=> 'damianladiani2@gmail.com',
-            'birthday' => '1989-12-31'
+            'email' => 'damianladiani2@gmail.com',
+            'birthday' => '1989-12-31',
         ];
         Livewire::test(Developer::class)
-            ->set('developer_id',$developer->id)
+            ->set('developer_id', $developer->id)
             ->set('firstname', $new_data['firstname'])
             ->set('lastname', $new_data['lastname'])
             ->set('nid', $new_data['nid'])
             ->set('email', $new_data['email'])
             ->set('birthday', $new_data['birthday'])
-            ->set('skills',$skills->pluck('id')->toArray())
+            ->set('skills', $skills->pluck('id')->toArray())
             ->call('submitForm')
             ->assertSee('Developer successfully saved.');
 
-        $this->assertDatabaseMissing('developers',$data);
+        $this->assertDatabaseMissing('developers', $data);
 
-        $this->assertDatabaseHas('developers',$new_data);
+        $this->assertDatabaseHas('developers', $new_data);
     }
 
     /** @test */
@@ -146,12 +146,12 @@ class DeveloperTest extends TestCase
         $developer = \App\Models\Developer::factory()->create($data);
 
         Livewire::test(Developer::class)
-            ->call('delete',$developer->id);
+            ->call('delete', $developer->id);
 
-        $this->assertSoftDeleted('developers',[
+        $this->assertSoftDeleted('developers', [
             ...$data,
-            'user_id' => auth()->user()->id
-            ]
+            'user_id' => auth()->user()->id,
+        ]
         );
     }
 
@@ -162,11 +162,11 @@ class DeveloperTest extends TestCase
         $developer = \App\Models\Developer::factory()->trashed()->create($data);
 
         Livewire::test(Developer::class)
-            ->call('activate',$developer->id);
+            ->call('activate', $developer->id);
 
-        $this->assertNotSoftDeleted('developers',[
+        $this->assertNotSoftDeleted('developers', [
             'user_id' => auth()->user()->id,
-            ...$data
+            ...$data,
         ]);
     }
 

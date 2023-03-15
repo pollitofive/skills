@@ -3,7 +3,8 @@
 namespace Tests\Feature;
 
 use App\Http\Livewire\ListDevelopers;
-use App\Models\{SkillXDeveloper,User};
+use App\Models\SkillXDeveloper;
+use App\Models\User;
 use Illuminate\Support\Collection;
 use Livewire\Livewire;
 use Tests\TestCase;
@@ -20,25 +21,25 @@ class ListDeveloperTest extends TestCase
     public function can_show_own_data()
     {
         $list_developers = \App\Models\Developer::factory(5)->create([
-            'user_id' => auth()->user()->id
+            'user_id' => auth()->user()->id,
         ]);
 
         $list_skills = \App\Models\Skill::factory(10)->create([
-            'user_id' => auth()->user()->id
+            'user_id' => auth()->user()->id,
         ]);
 
-        foreach($list_developers as $developer) {
-            foreach($list_skills->random(3) as $skill) {
+        foreach ($list_developers as $developer) {
+            foreach ($list_skills->random(3) as $skill) {
                 $skill_model = new SkillXDeveloper(['skill_id' => $skill->id]);
                 $developer->skills_x_developer()->save($skill_model);
             }
         }
 
         $test = Livewire::test(ListDevelopers::class)
-            ->set('search','%')
+            ->set('search', '%')
             ->call('render');
 
-        foreach($list_developers as $developer) {
+        foreach ($list_developers as $developer) {
             $test->assertSee($developer->firtname)
                 ->assertSee($developer->lastname)
                 ->assertSee($developer->nid)
@@ -53,30 +54,30 @@ class ListDeveloperTest extends TestCase
     public function dont_show_other_data()
     {
         $list_own_developers = \App\Models\Developer::factory(5)->create([
-            'user_id' => auth()->user()->id
+            'user_id' => auth()->user()->id,
         ]);
 
         $list_own_skills = \App\Models\Skill::factory(10)->create([
-            'user_id' => auth()->user()->id
+            'user_id' => auth()->user()->id,
         ]);
 
-        foreach($list_own_developers as $developer) {
-            foreach($list_own_skills->random(3) as $skill) {
+        foreach ($list_own_developers as $developer) {
+            foreach ($list_own_skills->random(3) as $skill) {
                 $skill_model = new SkillXDeveloper(['skill_id' => $skill->id]);
                 $developer->skills_x_developer()->save($skill_model);
             }
         }
 
         $list_other_developers = \App\Models\Developer::factory(3)->create([
-            'user_id' => User::factory()->create()
+            'user_id' => User::factory()->create(),
         ]);
 
         $list_other_skills = \App\Models\Skill::factory(3)->create([
-            'user_id' => User::factory()->create()
+            'user_id' => User::factory()->create(),
         ]);
 
-        foreach($list_other_developers as $developer) {
-            foreach($list_other_skills->random(3) as $skill) {
+        foreach ($list_other_developers as $developer) {
+            foreach ($list_other_skills->random(3) as $skill) {
                 $skill_model = new SkillXDeveloper(['skill_id' => $skill->id]);
                 $developer->skills_x_developer()->save($skill_model);
             }
@@ -85,7 +86,7 @@ class ListDeveloperTest extends TestCase
         $test = Livewire::test(ListDevelopers::class)
             ->call('render');
 
-        foreach($list_own_developers as $developer) {
+        foreach ($list_own_developers as $developer) {
             $test->assertSee($developer->firstname)
                 ->assertSee($developer->lastname)
                 ->assertSee($developer->nid)
@@ -94,7 +95,7 @@ class ListDeveloperTest extends TestCase
                 ->assertSee('Active');
         }
 
-        foreach($list_other_developers as $developer) {
+        foreach ($list_other_developers as $developer) {
             $test->assertDontSee($developer->firsname)
                 ->assertDontSee($developer->lastname)
                 ->assertDontSee($developer->nid)
@@ -107,7 +108,7 @@ class ListDeveloperTest extends TestCase
     public function dont_show_inactive_data_if_is_not_checked_the_option()
     {
         $list_developers = \App\Models\Developer::factory(3)->create([
-            'user_id' => auth()->user()->id
+            'user_id' => auth()->user()->id,
         ]);
 
         $list_developers = $this->createSkills($list_developers);
@@ -121,7 +122,7 @@ class ListDeveloperTest extends TestCase
         $test = Livewire::test(ListDevelopers::class)
             ->call('render');
 
-        foreach($list_developers as $developer) {
+        foreach ($list_developers as $developer) {
             $test->assertSee($developer->firstname)
                 ->assertSee($developer->lastname)
                 ->assertSee($developer->nid)
@@ -141,7 +142,7 @@ class ListDeveloperTest extends TestCase
     public function show_inactive_data_if_is_checked_the_option()
     {
         $list_developers = \App\Models\Developer::factory(3)->create([
-            'user_id' => auth()->user()->id
+            'user_id' => auth()->user()->id,
         ]);
 
         $list_developers = $this->createSkills($list_developers);
@@ -153,10 +154,10 @@ class ListDeveloperTest extends TestCase
         $developer_inactive = $this->createSkills($developer_inactive);
 
         $test = Livewire::test(ListDevelopers::class)
-            ->set('active',false)
+            ->set('active', false)
             ->call('render');
 
-        foreach($list_developers as $developer) {
+        foreach ($list_developers as $developer) {
             $test->assertSee($developer->firstname)
                 ->assertSee($developer->lastname)
                 ->assertSee($developer->nid)
@@ -180,7 +181,7 @@ class ListDeveloperTest extends TestCase
         $this->createDeveloperWithSkill(firstname: 'Lucas');
 
         $test = Livewire::test(ListDevelopers::class)
-            ->set('search','Damian')
+            ->set('search', 'Damian')
             ->call('render');
 
         $test->assertSee('Damian Leandro')
@@ -197,7 +198,7 @@ class ListDeveloperTest extends TestCase
         $this->createDeveloperWithSkill(lastname: 'Blitsisi Hidalgo');
 
         $test = Livewire::test(ListDevelopers::class)
-            ->set('search','Perez')
+            ->set('search', 'Perez')
             ->call('render');
 
         $test->assertSee('Ladiani Perez')
@@ -214,7 +215,7 @@ class ListDeveloperTest extends TestCase
         $this->createDeveloperWithSkill(firstname: 'Lucas', nid: '33600888');
 
         $test = Livewire::test(ListDevelopers::class)
-            ->set('search','600')
+            ->set('search', '600')
             ->call('render');
 
         $test->assertSee('Daniel')
@@ -234,7 +235,7 @@ class ListDeveloperTest extends TestCase
         $this->createDeveloperWithSkill(firstname: 'Lucas', email: 'lucas@gmail.com');
 
         $test = Livewire::test(ListDevelopers::class)
-            ->set('search','gmail')
+            ->set('search', 'gmail')
             ->call('render');
 
         $test->assertSee('Damian')
@@ -254,7 +255,7 @@ class ListDeveloperTest extends TestCase
         $this->createDeveloperWithSkill(firstname: 'Lucas', birthday: '1989-05-05');
 
         $test = Livewire::test(ListDevelopers::class)
-            ->set('search','1988')
+            ->set('search', '1988')
             ->call('render');
 
         $test->assertSee('Damian')
@@ -271,7 +272,7 @@ class ListDeveloperTest extends TestCase
     {
         $skill_laravel = \App\Models\Skill::factory()->create([
             'user_id' => auth()->user()->id,
-            'description' => 'Laravel'
+            'description' => 'Laravel',
         ]);
 
         $developer1 = $this->createDeveloperWithSkill(firstname: 'Damian');
@@ -287,7 +288,7 @@ class ListDeveloperTest extends TestCase
         $this->createDeveloperWithSkill(firstname: 'Lucas');
 
         $test = Livewire::test(ListDevelopers::class)
-            ->set('search','Laravel')
+            ->set('search', 'Laravel')
             ->call('render');
 
         $test->assertSee('Damian')
@@ -297,23 +298,23 @@ class ListDeveloperTest extends TestCase
         $test->assertDontSee('Lucas');
     }
 
-
     private function createSkills($list_developers)
     {
         $list_own_skills = \App\Models\Skill::factory(10)->create([
-            'user_id' => auth()->user()->id
+            'user_id' => auth()->user()->id,
         ]);
 
-        if(! $list_developers instanceof Collection ) {
-            foreach($list_own_skills->random(3) as $skill) {
+        if (! $list_developers instanceof Collection) {
+            foreach ($list_own_skills->random(3) as $skill) {
                 $skill_model = new SkillXDeveloper(['skill_id' => $skill->id]);
                 $list_developers->skills_x_developer()->save($skill_model);
             }
+
             return $list_developers;
         }
 
-        foreach($list_developers as $developer) {
-            foreach($list_own_skills->random(3) as $skill) {
+        foreach ($list_developers as $developer) {
+            foreach ($list_own_skills->random(3) as $skill) {
                 $skill_model = new SkillXDeveloper(['skill_id' => $skill->id]);
                 $developer->skills_x_developer()->save($skill_model);
             }
@@ -322,28 +323,32 @@ class ListDeveloperTest extends TestCase
         return $list_developers;
     }
 
-    private function createDeveloperWithSkill($firstname='',$lastname='',$nid='',$email='',$birthday='')
+    private function createDeveloperWithSkill($firstname = '', $lastname = '', $nid = '', $email = '', $birthday = '')
     {
         $data = [];
-        if($firstname) $data['firstname'] = $firstname;
-        if($lastname) $data['lastname'] = $lastname;
-        if($nid) $data['nid'] = $nid;
-        if($email) $data['email'] = $email;
-        if($birthday) $data['birthday'] = $birthday;
-
+        if ($firstname) {
+            $data['firstname'] = $firstname;
+        }
+        if ($lastname) {
+            $data['lastname'] = $lastname;
+        }
+        if ($nid) {
+            $data['nid'] = $nid;
+        }
+        if ($email) {
+            $data['email'] = $email;
+        }
+        if ($birthday) {
+            $data['birthday'] = $birthday;
+        }
 
         $developer = \App\Models\Developer::factory()->create([
             'user_id' => auth()->user()->id,
-            ...$data
+            ...$data,
         ]);
 
         $this->createSkills($developer);
 
         return $developer;
-
     }
-
-
-
-
 }
