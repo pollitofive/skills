@@ -2,28 +2,28 @@
 
 namespace Tests\Feature;
 
-use App\Http\Livewire\ListSkill;
+use App\Livewire\ListSkill;
 use App\Models\User;
 use Livewire\Livewire;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class ListSkillTest extends TestCase
 {
-    /** @test */
+    #[Test]
     public function main_page_contains_list_skills_livewire_component()
     {
         $this->get('skills')->assertSeeLivewire('list-skill');
     }
 
-    /** @test */
+    #[Test]
     public function can_show_own_data()
     {
         $list_skills = \App\Models\Skill::factory(5)->create([
             'user_id' => auth()->user()->id,
         ]);
 
-        $test = Livewire::test(ListSkill::class)
-            ->call('render');
+        $test = Livewire::test(ListSkill::class);
 
         foreach ($list_skills as $skill) {
             $test->assertSee($skill->description)
@@ -32,7 +32,7 @@ class ListSkillTest extends TestCase
         }
     }
 
-    /** @test */
+    #[Test]
     public function dont_show_other_data()
     {
         $list_own_skills = \App\Models\Skill::factory(3)->create([
@@ -43,8 +43,7 @@ class ListSkillTest extends TestCase
             'user_id' => User::factory()->create(),
         ]);
 
-        $test = Livewire::test(ListSkill::class)
-            ->call('render');
+        $test = Livewire::test(ListSkill::class);
 
         foreach ($list_own_skills as $skill) {
             $test->assertSee($skill->description)
@@ -57,7 +56,7 @@ class ListSkillTest extends TestCase
         }
     }
 
-    /** @test */
+    #[Test]
     public function dont_show_inactive_data_if_is_not_checked_the_option()
     {
         $list_own_skills = \App\Models\Skill::factory(3)->create([
@@ -69,8 +68,7 @@ class ListSkillTest extends TestCase
 
         ]);
 
-        $test = Livewire::test(ListSkill::class)
-            ->call('render');
+        $test = Livewire::test(ListSkill::class);
 
         foreach ($list_own_skills as $skill) {
             $test->assertSee($skill->description)
@@ -81,7 +79,7 @@ class ListSkillTest extends TestCase
         $test->assertDontSee($skill_inactive->description);
     }
 
-    /** @test */
+    #[Test]
     public function show_inactive_data_if_is_checked_the_option()
     {
         $list_own_skills = \App\Models\Skill::factory(3)->create([
@@ -93,8 +91,7 @@ class ListSkillTest extends TestCase
         ]);
 
         $test = Livewire::test(ListSkill::class)
-            ->set('active', false)
-            ->call('render');
+            ->set('active', false);
 
         foreach ($list_own_skills as $skill) {
             $test->assertSee($skill->description)
@@ -105,7 +102,7 @@ class ListSkillTest extends TestCase
         $test->assertSee($skill_inactive->description);
     }
 
-    /** @test */
+    #[Test]
     public function show_data_with_search_filter()
     {
         \App\Models\Skill::factory()->create(['user_id' => auth()->user()->id, 'description' => 'Livewire']);
@@ -113,8 +110,7 @@ class ListSkillTest extends TestCase
         \App\Models\Skill::factory()->create(['user_id' => auth()->user()->id, 'description' => 'Vue']);
 
         $test = Livewire::test(ListSkill::class)
-            ->set('search', 'L')
-            ->call('render');
+            ->set('search', 'L');
 
         $test->assertSee('Laravel')
             ->assertSee('Livewire');

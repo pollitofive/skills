@@ -3,6 +3,7 @@
          xsi:noNamespaceSchemaLocation="./vendor/phpunit/phpunit/phpunit.xsd"
          bootstrap="vendor/autoload.php"
          colors="true"
+         failOnDeprecation="true"
 >
     <testsuites>
         <testsuite name="Unit">
@@ -12,21 +13,6 @@
             <directory suffix="Test.php">./tests/Feature</directory>
         </testsuite>
     </testsuites>
-    <coverage processUncoveredFiles="true">
-        <include>
-            <directory suffix=".php">./app</directory>
-        </include>
-        <exclude>
-            <directory>./app/Http/Middleware</directory>
-            <directory>./app/Http/Controllers</directory>
-            <directory>./app/Http/Requests</directory>
-            <directory>./app/Actions</directory>
-            <directory>./app/Console</directory>
-            <directory>./app/Exceptions</directory>
-            <directory>./app/View</directory>
-            <file>./app/Providers/BroadcastServiceProvider.php</file>
-        </exclude>
-    </coverage>
     <php>
         <env name="APP_ENV" value="testing"/>
         <env name="BCRYPT_ROUNDS" value="4"/>

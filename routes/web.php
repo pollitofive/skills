@@ -13,13 +13,14 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+
 Route::get('/', function () {
     return view('auth.login');
 })->middleware('auth.isLoggedIn');
 
 Route::middleware('auth')->group(function () {
     Route::get('/developers', function () {
-        return view('developers');
+        return view('developer');
     })->name('developers');
 
     Route::get('/skills', function () {

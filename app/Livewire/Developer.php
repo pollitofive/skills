@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Livewire;
+namespace App\Livewire;
 
 use App\Models\Developer as DeveloperModel;
 use App\Models\Skill as SkillModel;
@@ -48,10 +48,10 @@ class Developer extends Component
         $this->clearProperties();
         $this->message = 'Developer successfully saved.';
 
-        $this->dispatchBrowserEvent('contentChanged');
-        $this->dispatchBrowserEvent('scroll-to-list');
-        $this->dispatchBrowserEvent('hide-message');
-        $this->emitTo('list-developers', '$refresh');
+        $this->dispatch('contentChanged');
+        $this->dispatch('scroll-to-list');
+        $this->dispatch('hide-message');
+        $this->dispatch('$refresh')->to('list-developers');
     }
 
     public function edit(int $id): void
@@ -64,17 +64,18 @@ class Developer extends Component
         $this->email = $developer->email;
         $this->birthday = $developer->birthday;
         $this->developer_id = $developer->id;
-        $this->skills = [];
+
+        $this->skills = $developer->skills_x_developer->pluck('skill_id')->toArray();
         $this->message = '';
 
-        $this->dispatchBrowserEvent('scroll-to-top');
+        $this->dispatch('scroll-to-top');
     }
 
     public function delete(int $id): void
     {
         $developer = DeveloperModel::first($id, auth()->user()->id);
         $developer->delete();
-        $this->emitTo('list-developers', '$refresh');
+        $this->dispatch('$refresh')->to('list-developers');
         $this->message = '';
     }
 
@@ -82,7 +83,7 @@ class Developer extends Component
     {
         $developer = DeveloperModel::first($id, auth()->user()->id);
         $developer->restore();
-        $this->emitTo('list-developers', '$refresh');
+        $this->dispatch('$refresh')->to('list-developers');
         $this->message = '';
     }
 

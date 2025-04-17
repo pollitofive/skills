@@ -2,22 +2,23 @@
 
 namespace Tests\Feature;
 
-use App\Http\Livewire\ChangePassword;
+use App\Livewire\ChangePassword;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Livewire\Livewire;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class ChangePasswordTest extends TestCase
 {
-    /** @test */
+    #[Test]
     public function main_page_contains_change_password_form_livewire_component()
     {
         $this->get('change-password')->assertSeeLivewire('change-password');
     }
 
-    /** @test */
+    #[Test]
     public function can_change_password()
     {
         Livewire::test(ChangePassword::class)
@@ -32,7 +33,7 @@ class ChangePasswordTest extends TestCase
             $user->password));
     }
 
-    /** @test */
+    #[Test]
     public function validate_required_data()
     {
         Livewire::test(ChangePassword::class)
@@ -43,7 +44,7 @@ class ChangePasswordTest extends TestCase
             ->assertSee('The new password field is required.');
     }
 
-    /** @test */
+    #[Test]
     public function validate_min_characters()
     {
         Livewire::test(ChangePassword::class)
@@ -54,7 +55,7 @@ class ChangePasswordTest extends TestCase
             ->assertSee('The new password must be at least 6 characters.');
     }
 
-    /** @test */
+    #[Test]
     public function validate_new_password_and_confirmation_must_be_same()
     {
         Livewire::test(ChangePassword::class)
@@ -65,7 +66,7 @@ class ChangePasswordTest extends TestCase
             ->assertSee('The new password confirmation does not match.');
     }
 
-    /** @test */
+    #[Test]
     public function validate_new_password_should_be_different_from_the_lastone()
     {
         Livewire::test(ChangePassword::class)
@@ -76,7 +77,7 @@ class ChangePasswordTest extends TestCase
             ->assertSee('The new password and old password must be different.');
     }
 
-    /** @test */
+    #[Test]
     public function validate_old_password_is_correct()
     {
         Livewire::test(ChangePassword::class)

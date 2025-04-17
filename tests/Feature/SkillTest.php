@@ -2,19 +2,20 @@
 
 namespace Tests\Feature;
 
-use App\Http\Livewire\Skill;
+use App\Livewire\Skill;
 use Livewire\Livewire;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class SkillTest extends TestCase
 {
-    /** @test */
+    #[Test]
     public function main_page_contains_skills_form_livewire_component()
     {
         $this->get('skills')->assertSeeLivewire('skill');
     }
 
-    /** @test */
+    #[Test]
     public function skill_form_sends_save_data()
     {
         Livewire::test(Skill::class)
@@ -28,7 +29,7 @@ class SkillTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function form_skill_is_required()
     {
         Livewire::test(Skill::class)
@@ -42,7 +43,7 @@ class SkillTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function skill_can_not_be_repeat()
     {
         \App\Models\Skill::create([
@@ -56,7 +57,7 @@ class SkillTest extends TestCase
             ->assertSee('The skill already exist.');
     }
 
-    /** @test */
+    #[Test]
     public function page_edit_shows_the_selected_skill()
     {
         $skill = \App\Models\Skill::create([
@@ -70,7 +71,7 @@ class SkillTest extends TestCase
             ->assertSet('skill_id', $skill->id);
     }
 
-    /** @test */
+    #[Test]
     public function skill_can_be_edited()
     {
         $skill = \App\Models\Skill::create([
@@ -95,7 +96,7 @@ class SkillTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function skill_can_be_deleted()
     {
         $skill = \App\Models\Skill::create([
@@ -112,7 +113,7 @@ class SkillTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function skill_can_be_activated()
     {
         $skill = \App\Models\Skill::create([

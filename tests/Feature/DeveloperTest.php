@@ -2,21 +2,22 @@
 
 namespace Tests\Feature;
 
-use App\Http\Livewire\Developer;
+use App\Livewire\Developer;
 use App\Models\Skill;
 use Livewire\Livewire;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class DeveloperTest extends TestCase
 {
-    /** @test */
+    #[Test]
     public function main_page_contains_developers_form_livewire_component()
     {
         $this->withoutExceptionHandling();
         $this->get('developers')->assertSeeLivewire('developer');
     }
 
-    /** @test */
+    #[Test]
     public function developer_form_sends_save_data()
     {
         $skills = Skill::factory(3)->create([
@@ -45,7 +46,7 @@ class DeveloperTest extends TestCase
         }
     }
 
-    /** @test */
+    #[Test]
     public function developer_form_validates_basic_data()
     {
         Livewire::test(Developer::class)
@@ -65,7 +66,7 @@ class DeveloperTest extends TestCase
             ->assertSee('You should select at least one skill.');
     }
 
-    /** @test */
+    #[Test]
     public function nid_must_be_unique()
     {
         \App\Models\Developer::factory()->create([
@@ -79,7 +80,7 @@ class DeveloperTest extends TestCase
             ->assertSee('The nid has already been taken.');
     }
 
-    /** @test */
+    #[Test]
     public function email_must_be_unique()
     {
         \App\Models\Developer::factory()->create([
@@ -93,7 +94,7 @@ class DeveloperTest extends TestCase
             ->assertSee('The email has already been taken.');
     }
 
-    /** @test */
+    #[Test]
     public function page_edit_shows_the_selected_developer()
     {
         $developer = \App\Models\Developer::factory()->create($this->getData());
@@ -107,7 +108,7 @@ class DeveloperTest extends TestCase
             ->assertSet('developer_id', $developer->id);
     }
 
-    /** @test */
+    #[Test]
     public function developer_can_be_edited()
     {
         $skills = Skill::factory(3)->create([
@@ -139,7 +140,7 @@ class DeveloperTest extends TestCase
         $this->assertDatabaseHas('developers', $new_data);
     }
 
-    /** @test */
+    #[Test]
     public function skill_can_be_deleted()
     {
         $data = $this->getData();
@@ -155,7 +156,7 @@ class DeveloperTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function skill_can_be_activated()
     {
         $data = $this->getData();

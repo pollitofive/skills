@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Livewire;
+namespace App\Livewire;
 
 use App\Models\Skill as SkillModel;
 use App\Rules\UniqueSkillForUser;
@@ -36,7 +36,7 @@ class Skill extends Component
         $this->skill_id = 0;
         $this->name = '';
         $this->message = 'Skill successfully saved.';
-        $this->emitTo('list-skill', '$refresh');
+        $this->dispatch('$refresh')->to('list-skill');
     }
 
     public function edit(int $id): void
@@ -51,7 +51,7 @@ class Skill extends Component
         $skill = SkillModel::first($id, auth()->user()->id);
         $skill->delete();
         Cache::forget('skills.'.auth()->user()->id);
-        $this->emitTo('list-skill', '$refresh');
+        $this->dispatch('$refresh')->to('list-skill');
     }
 
     public function activate(int $id): void
@@ -59,7 +59,7 @@ class Skill extends Component
         $skill = SkillModel::first($id, auth()->user()->id);
         $skill->restore();
         Cache::forget('skills.'.auth()->user()->id);
-        $this->emitTo('list-skill', '$refresh');
+        $this->dispatch('$refresh')->to('list-skill');
     }
 
     public function getModel(): SkillModel

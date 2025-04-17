@@ -2,22 +2,23 @@
 
 namespace Tests\Feature;
 
-use App\Http\Livewire\ListDevelopers;
+use App\Livewire\ListDevelopers;
 use App\Models\SkillXDeveloper;
 use App\Models\User;
 use Illuminate\Support\Collection;
 use Livewire\Livewire;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class ListDeveloperTest extends TestCase
 {
-    /** @test */
+    #[Test]
     public function main_page_contains_list_developers_livewire_component()
     {
         $this->get('developers')->assertSeeLivewire('list-developers');
     }
 
-    /** @test */
+    #[Test]
     public function can_show_own_data()
     {
         $list_developers = \App\Models\Developer::factory(5)->create([
@@ -36,8 +37,7 @@ class ListDeveloperTest extends TestCase
         }
 
         $test = Livewire::test(ListDevelopers::class)
-            ->set('search', '%')
-            ->call('render');
+            ->set('search', '%');
 
         foreach ($list_developers as $developer) {
             $test->assertSee($developer->firtname)
@@ -50,7 +50,7 @@ class ListDeveloperTest extends TestCase
         }
     }
 
-    /** @test */
+    #[Test]
     public function dont_show_other_data()
     {
         $list_own_developers = \App\Models\Developer::factory(5)->create([
@@ -83,8 +83,7 @@ class ListDeveloperTest extends TestCase
             }
         }
 
-        $test = Livewire::test(ListDevelopers::class)
-            ->call('render');
+        $test = Livewire::test(ListDevelopers::class);
 
         foreach ($list_own_developers as $developer) {
             $test->assertSee($developer->firstname)
@@ -104,7 +103,7 @@ class ListDeveloperTest extends TestCase
         }
     }
 
-    /** @test */
+    #[Test]
     public function dont_show_inactive_data_if_is_not_checked_the_option()
     {
         $list_developers = \App\Models\Developer::factory(3)->create([
@@ -119,8 +118,7 @@ class ListDeveloperTest extends TestCase
 
         $developer_inactive = $this->createSkills($developer_inactive);
 
-        $test = Livewire::test(ListDevelopers::class)
-            ->call('render');
+        $test = Livewire::test(ListDevelopers::class);
 
         foreach ($list_developers as $developer) {
             $test->assertSee($developer->firstname)
@@ -138,7 +136,7 @@ class ListDeveloperTest extends TestCase
             ->assertDontSee($developer_inactive->birthday);
     }
 
-    /** @test */
+    #[Test]
     public function show_inactive_data_if_is_checked_the_option()
     {
         $list_developers = \App\Models\Developer::factory(3)->create([
@@ -154,8 +152,7 @@ class ListDeveloperTest extends TestCase
         $developer_inactive = $this->createSkills($developer_inactive);
 
         $test = Livewire::test(ListDevelopers::class)
-            ->set('active', false)
-            ->call('render');
+            ->set('active', false);
 
         foreach ($list_developers as $developer) {
             $test->assertSee($developer->firstname)
@@ -173,7 +170,7 @@ class ListDeveloperTest extends TestCase
             ->assertSee($developer_inactive->birthday);
     }
 
-    /** @test */
+    #[Test]
     public function show_data_with_search_filter_in_firstname()
     {
         $this->createDeveloperWithSkill(firstname: 'Damian Leandro');
@@ -181,8 +178,7 @@ class ListDeveloperTest extends TestCase
         $this->createDeveloperWithSkill(firstname: 'Lucas');
 
         $test = Livewire::test(ListDevelopers::class)
-            ->set('search', 'Damian')
-            ->call('render');
+            ->set('search', 'Damian');
 
         $test->assertSee('Damian Leandro')
             ->assertSee('Damian Javier');
@@ -190,7 +186,7 @@ class ListDeveloperTest extends TestCase
         $test->assertDontSee('Lucas');
     }
 
-    /** @test */
+    #[Test]
     public function show_data_with_search_filter_in_lastname()
     {
         $this->createDeveloperWithSkill(lastname: 'Ladiani Perez');
@@ -198,8 +194,7 @@ class ListDeveloperTest extends TestCase
         $this->createDeveloperWithSkill(lastname: 'Blitsisi Hidalgo');
 
         $test = Livewire::test(ListDevelopers::class)
-            ->set('search', 'Perez')
-            ->call('render');
+            ->set('search', 'Perez');
 
         $test->assertSee('Ladiani Perez')
             ->assertSee('Blitman Perez');
@@ -207,7 +202,7 @@ class ListDeveloperTest extends TestCase
         $test->assertDontSee('Blitsisi Hidalgo');
     }
 
-    /** @test */
+    #[Test]
     public function show_data_with_search_filter_in_nid()
     {
         $this->createDeveloperWithSkill(firstname: 'Damian', nid: '33500666');
@@ -215,8 +210,7 @@ class ListDeveloperTest extends TestCase
         $this->createDeveloperWithSkill(firstname: 'Lucas', nid: '33600888');
 
         $test = Livewire::test(ListDevelopers::class)
-            ->set('search', '600')
-            ->call('render');
+            ->set('search', '600');
 
         $test->assertSee('Daniel')
             ->assertSee('33600777')
@@ -227,7 +221,7 @@ class ListDeveloperTest extends TestCase
                 ->assertDontSee('33500666');
     }
 
-    /** @test */
+    #[Test]
     public function show_data_with_search_filter_in_email()
     {
         $this->createDeveloperWithSkill(firstname: 'Damian', email: 'damian@gmail.com');
@@ -235,8 +229,7 @@ class ListDeveloperTest extends TestCase
         $this->createDeveloperWithSkill(firstname: 'Lucas', email: 'lucas@gmail.com');
 
         $test = Livewire::test(ListDevelopers::class)
-            ->set('search', 'gmail')
-            ->call('render');
+            ->set('search', 'gmail');
 
         $test->assertSee('Damian')
             ->assertSee('damian@gmail.com')
@@ -247,7 +240,7 @@ class ListDeveloperTest extends TestCase
             ->assertDontSee('daniel@hotmail.com');
     }
 
-    /** @test */
+    #[Test]
     public function show_data_with_search_filter_in_birthday()
     {
         $this->createDeveloperWithSkill(firstname: 'Damian', birthday: '1988-01-01');
@@ -255,8 +248,7 @@ class ListDeveloperTest extends TestCase
         $this->createDeveloperWithSkill(firstname: 'Lucas', birthday: '1989-05-05');
 
         $test = Livewire::test(ListDevelopers::class)
-            ->set('search', '1988')
-            ->call('render');
+            ->set('search', '1988');
 
         $test->assertSee('Damian')
             ->assertSee('1988-01-01')
@@ -267,7 +259,7 @@ class ListDeveloperTest extends TestCase
             ->assertDontSee('1989-05-05');
     }
 
-    /** @test */
+    #[Test]
     public function show_data_with_search_filter_in_skills()
     {
         $skill_laravel = \App\Models\Skill::factory()->create([
@@ -288,8 +280,7 @@ class ListDeveloperTest extends TestCase
         $this->createDeveloperWithSkill(firstname: 'Lucas');
 
         $test = Livewire::test(ListDevelopers::class)
-            ->set('search', 'Laravel')
-            ->call('render');
+            ->set('search', 'Laravel');
 
         $test->assertSee('Damian')
             ->assertSee('Laravel')
